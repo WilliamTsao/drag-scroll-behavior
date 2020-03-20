@@ -1,0 +1,50 @@
+{
+  "name": "drag-scroll-behavior",
+  "author": "william tsao",
+  "version": "0.0.0",
+  "description": "Allowing scrolling to happen when you are dra",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/williamtsao/drag-scroll-behavior.git"
+  },
+  "bugs": {
+    "url": "https://github.com/williamtsao/drag-scroll-behavior/issues"
+  },
+  "license": "https://github.com/williamtsao/drag-scroll-behavior/LICENSE.txt",
+  "scripts": {
+    "clean": "rm -rf bower_components/drag-scroll-behavior",
+    "test": "npm run clean && gulp copy && wct --verbose --plugin local",
+    "test:remote": "npm run clean && gulp copy && ./travis-scripts/travis.sh",
+    "serve-host": "polymer serve --hostname 0.0.0.0",
+    "no-block-es-lint": "eslint drag-scroll-behavior*; exit 0",
+    "full-lint": "npm run no-block-es-lint && polymer lint",
+    "analyze": "polymer analyze > analysis.json",
+    "start": "npm run clean && npm run analyze && gulp default",
+    "pages": "npm run clean && npm run analyze && gulp pages-deployment",
+    "release-patch": "gulp tag-patch && gulp push-tag",
+    "release-minor": "gulp tag-minor && gulp push-tag",
+    "release-major": "gulp tag-major && gulp push-tag"
+  },
+  "engines": {
+    "node": ">=6.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.15.0",
+    "eslint": "^6.1.0",
+    "eslint-plugin-html": "^6.0.0",
+    "eslint-plugin-polymer": "^0.4.0",
+    "gulp": "^4.0.0",
+    "gulp-bump": "^2.7.0",
+    "gulp-filter": "^5.0.0",
+    "gulp-gh-pages": "^0.5.4",
+    "gulp-git": "^2.0.0",
+    "gulp-savefile": "^0.1.1",
+    "gulp-tag-version": "^1.3.0",
+    "require-dir": "^0.3.1",
+    "web-component-tester": "^6.8.0"
+  },
+  "wct-plugin": {
+    "cli-options": {}
+  },
+  "private": true
+}

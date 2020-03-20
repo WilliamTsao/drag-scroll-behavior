@@ -1,0 +1,41 @@
+{
+  "name": "drag-scroll-behavior",
+  "author":"william tsao",
+  "version": "0.0.0",
+  "description": "Allowing scrolling to happen when you are dra",
+  "private": true,
+  "license": "https://github.com/williamtsao/drag-scroll-behavior/LICENSE",
+  "homepage": "https://github.com/williamtsao/drag-scroll-behavior",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/williamtsao/drag-scroll-behavior.git"
+  },
+  "keywords": [
+    "polymer",
+    "web-components",
+    "web-component"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "demo",
+    "implementation",
+    ".travis.yml",
+    ".github",
+    "wct.conf.json",
+    "gulpfile.js"
+  ],
+  "dependencies": {
+      "polymer": "Polymer/polymer#^2.6.0"
+  },
+  "devDependencies": {
+     "web-component-tester": "*",
+
+      "iron-component-page": "PolymerElements/iron-component-page#^2.0.0",
+      "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.1.2",
+      "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  }
+
+}

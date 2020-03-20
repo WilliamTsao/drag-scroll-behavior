@@ -1,0 +1,200 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="drag-scroll-behavior">
+  <script>
+    /**
+     * Allowing scrolling to happen when you are dra
+     * @extends Polymer.Element
+     */
+    class DragScrollBehavior extends Polymer.Element {
+      static get is() {
+        return 'drag-scroll-behavior';
+      }
+
+      static get properties() {
+        return {
+          scrollTarget: {
+            type: HTMLElement,
+            observer: 'scrollTargetChanged'
+          },
+          dragScrollTargetHeight: {
+            type: Number,
+            value: 20
+          },
+          targetDisplay: {
+            type: String,
+            value: 'none'
+          },
+          /* how many pixels per frame, smaller => smoother & slower. larger => jumpy & faster */
+          frameSize: {
+            type: Number,
+            value: 5
+          },
+          /* miliseconds per frame, smaller => faster scroll */
+          msPerFrame : {
+            type: Number,
+            value: 25
+          }
+        };
+      }
+
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this._observer = new Polymer.FlattenedNodesObserver(this, (info) => {
+          this.scrollElement = this.querySelector('[slot="scroll-target"]');
+        });
+        this.addEventListener('dragover', (e)=>{
+          e.preventDefault();
+          /* if top or bottom target is the actual target of dragged over, do nothing */
+          if(e.composedPath()[0] === this.topTarget || e.composedPath()[0] === this.bottomTarget) {
+            return;
+          }
+          /* if dragging over the top of scroll element and scroll element is already scrolled to the top OR
+          if dragging over the bottom of scroll element and scroll element is already scrolled to the bottom
+          do NOT show target */
+          let layerY = e.layerY;
+          if((layerY <= this.dragScrollTargetHeight && this.atTop(this.scrollElement)) || 
+            (layerY >= this.scrollElement.offsetHeight - this.dragScrollTargetHeight && this.atBottom(this.scrollElement))) {
+            this.targetDisplay = 'none';  
+          } else {
+            this.targetDisplay = 'block';
+          }
+        });
+
+        this.addEventListener('drop', (e)=>{
+          e.preventDefault();
+          this.targetDisplay = 'none';
+        });
+
+        this.topTarget = this.shadowRoot.querySelector('.drag-scroll-target-top');
+        this.bottomTarget = this.shadowRoot.querySelector('.drag-scroll-target-bottom');
+        this.topTarget.addEventListener('dragover', (e)=>{
+          if(this.scrollElement) {
+            if(!this.atTop(this.scrollElement)) {
+              this.scroll(-1);
+              this.debouncedScrollEnd();
+            } else {
+              this.targetDisplay = 'none';
+            }
+          }
+        });
+        this.bottomTarget.addEventListener('dragover', (e)=>{
+          if(this.scrollElement) {
+            if(!this.atBottom(this.scrollElement)) {
+              this.scroll(1);
+              this.debouncedScrollEnd();
+            } else {
+              this.targetDisplay = 'none';
+            }
+          }
+        });
+
+        this.topTarget.addEventListener('mouseover', (e)=>{
+          if(this.targetDisplay === 'block') {
+            this.targetDisplay = 'none';
+          }
+        });
+        this.bottomTarget.addEventListener('mouseover', (e)=>{
+          if(this.targetDisplay === 'block') {
+            this.targetDisplay = 'none';
+          }
+        });
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this._observer.disconnect();
+      }
+
+      scrollTargetChanged() {
+        if(this.scrollElement) {
+          this.height = this.scrollElement.offsetHeight;
+          this.width = this.scrollElement.offsetWidth;
+        }
+      }
+
+      debouncedScrollEnd(direction) {
+        this.scrollDebouncer = Polymer.Debouncer.debounce(
+          this.scrollDebouncer,
+          Polymer.Async.timeOut.after('100'),
+          this.scrollStop.bind(this)
+        );
+      }
+
+      scroll(direction) {
+        if(!this.scroller) {
+          this.scroller = setInterval(()=>{
+            this.scrollElement.scroll({
+              top: this.scrollElement.scrollTop + this.frameSize * direction
+            });
+          }, this.msPerFrame);
+        }
+      }
+
+      scrollStop() {
+        clearInterval(this.scroller);
+        this.scroller = null;
+      }
+
+      atTop(ele) {
+        return ele.scrollTop === 0;
+      }
+
+      atBottom(ele) {
+        return ele.scrollTop === ele.scrollHeight - ele.offsetHeight
+      }
+
+      static get template() {
+        return `
+          <style>
+            ${this.styleTemplate}
+          </style>
+          ${this.contentTemplate}
+        `;
+      }
+
+      static get contentTemplate() {
+        return `
+          <div class='wrap' style="height:[[height]];width:[[width]]">
+            <div class="drag-scroll-target drag-scroll-target-top" style="
+              height:[[dragScrollTargetHeight]]px;
+              display:[[targetDisplay]];
+            "></div>
+              <slot name='scroll-target'></slot>
+            <div class="drag-scroll-target drag-scroll-target-bottom" style="
+              height:[[dragScrollTargetHeight]]px;
+              display:[[targetDisplay]];
+            "></div>
+          </div>
+        `;
+      }
+
+      static get styleTemplate() {
+        return `
+          .wrap {
+            position: relative;
+          }
+          .drag-scroll-target {
+            position: absolute;
+            width: 100%;
+            z-index: 9999;
+          }
+          .drag-scroll-target-top {
+            top: 0;
+          }
+          .drag-scroll-target-bottom {
+            bottom: 0;
+          }
+        `;
+      }
+
+    }
+
+    customElements.define(DragScrollBehavior.is, DragScrollBehavior);
+
+  </script>
+</dom-module>

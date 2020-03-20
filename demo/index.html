@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	<title>drag-scroll-behavior Demo Page</title>
+
+	<script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+	
+	<link rel="import" href="../bower_components/drag-scroll-behavior/drag-scroll-behavior.html">
+	<link rel="import" href="../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
+	<link rel="import" href="../bower_components/iron-demo-helpers/demo-snippet.html">
+</head>
+<body unresolved>
+
+
+	<custom-style>
+		<style is="custom-style" include="demo-pages-shared-styles">
+			.drag {
+				width: 100px;
+				height: 100px;
+				background-color: aqua;
+				margin: 20px;
+			}
+			.drop {
+				width: 300px;
+				height: 300px;
+				overflow: scroll;
+			}
+			.drop p {
+				margin: 0;
+			}
+		</style>
+	</custom-style>
+	<h3>Example of drag-scroll-behavior</h3>
+	<p>Further description of drag-scroll-behavior example</p>
+	<demo-snippet class="centered-demo">
+		<template>
+			<div class='drag' draggable=true>
+				drag me
+			</div>
+			<drag-scroll-behavior>
+				<div slot='scroll-target' class='drop'>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan lacus eget libero bibendum feugiat. Nam blandit nunc quam, nec porta dolor pretium at. Quisque ac mauris eget neque molestie egestas. Cras malesuada, justo vitae suscipit dictum, purus arcu dignissim tellus, a tincidunt felis dolor et leo. Suspendisse consequat orci turpis, sagittis vulputate mauris sagittis vel. In consequat nibh eros. Proin sit amet dignissim libero. Nulla nec sem dapibus, rhoncus ligula a, lacinia justo. Aliquam consequat, ligula in porttitor pellentesque, elit dui viverra lectus, a imperdiet turpis lacus sed turpis. Morbi id fermentum leo. Duis tincidunt, nisl ac accumsan dignissim, lorem velit imperdiet mauris, sed aliquam lacus nulla non quam. Integer tincidunt felis ipsum, eu lobortis magna sollicitudin eget. Quisque maximus, urna nec tempor volutpat, odio purus consequat ex, eu porttitor leo augue at augue. Maecenas ut arcu felis.</p>
+					<p>Nullam nec ipsum ac nulla tempus sagittis. In pulvinar maximus gravida. Nam pulvinar sagittis mauris, a tempus nisi mollis non. Duis turpis diam, ultricies at luctus scelerisque, ullamcorper eu tellus. In vehicula elementum lacus quis interdum. Cras ut fermentum ligula, in feugiat justo. Donec id auctor velit. Fusce vitae sem nec magna placerat lobortis.</p>
+					<p>Vestibulum facilisis ligula lectus, eget finibus mi ultrices in. Pellentesque et vestibulum augue. Sed sollicitudin nulla id massa vehicula, a volutpat augue porttitor. In at eros ut orci dignissim consectetur. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer eget erat a mauris blandit scelerisque sagittis vitae quam. Aenean fringilla quam vel diam ultrices, non interdum quam feugiat. Integer ac nisi ante. Ut vehicula sed lectus non pharetra. Maecenas elementum nisi vel lacus molestie placerat. Aenean lobortis vestibulum sapien, vel molestie lectus facilisis in.</p>
+					<p>Vivamus euismod orci dapibus nisl vulputate pretium. Nullam maximus lorem ex. Aenean imperdiet maximus ipsum id consectetur. Sed tempus molestie arcu, quis volutpat diam venenatis scelerisque. Nunc molestie non odio quis varius. Praesent tempor at est nec iaculis. Aliquam eleifend elit ac lobortis sollicitudin.</p>
+					<p>Morbi ut lectus non velit mollis imperdiet sit amet ac nisl. Praesent sit amet finibus tellus. Curabitur elementum tempor vehicula. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Praesent aliquam vel diam at fermentum. Aenean nec lacinia diam, ac semper urna. Fusce sollicitudin dignissim ex nec iaculis. Curabitur fringilla condimentum varius. Ut vel nisl fermentum, posuere magna ac, mollis enim.</p>
+				</div>
+			</drag-scroll-behavior>
+		</template>
+	</demo-snippet>
+
+</body>
+</html>
