@@ -1,10 +1,10 @@
 ## drag-scroll-behavior
 
-[Get your badge](https://docs.travis-ci.com/user/status-images/)
-+[![Build Status](status_image)](status_link)
+<!-- [Get your badge](https://docs.travis-ci.com/user/status-images/)
++[![Build Status](status_image)](status_link) -->
 
 ### GH Pages Demo
-- [drag-scroll-behavior](https://williamtsao.github.io/drag-scroll-behavior)
+- [drag-scroll-behavior](https://williamtsao.github.io/drag-scroll-behavior/demo/)
 
 
 ### Description
