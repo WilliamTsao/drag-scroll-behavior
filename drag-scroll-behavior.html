@@ -13,9 +13,9 @@
 
       static get properties() {
         return {
-          scrollTarget: {
+          scrollElement: {
             type: HTMLElement,
-            observer: 'scrollTargetChanged'
+            observer: 'scrollElementChanged'
           },
           dragScrollTargetHeight: {
             type: Number,
@@ -34,6 +34,14 @@
           msPerFrame : {
             type: Number,
             value: 25
+          },
+          topTargetOffsetTop: {
+            type: Number,
+            computed: '_getTargetPosition("top", scrollEleTop)'
+          },
+          bottomTargetOffsetTop: {
+            type: Number,
+            computed: '_getTargetPosition("bottom", scrollEleTop, height, dragScrollTargetHeight)'
           }
         };
       }
@@ -110,10 +118,11 @@
         this._observer.disconnect();
       }
 
-      scrollTargetChanged() {
+      scrollElementChanged() {
         if(this.scrollElement) {
           this.height = this.scrollElement.offsetHeight;
           this.width = this.scrollElement.offsetWidth;
+          this.scrollEleTop = this.scrollElement.offsetTop;
         }
       }
 
@@ -148,6 +157,16 @@
         return ele.scrollTop === ele.scrollHeight - ele.offsetHeight
       }
 
+      _getTargetPosition(target, offsetTop, elementHeight, targetHeight) {
+        offsetTop = offsetTop || 0;
+        switch(target) {
+          case 'top':
+            return offsetTop;
+          case 'bottom':
+            return offsetTop + elementHeight - targetHeight;
+        }
+      }
+
       static get template() {
         return `
           <style>
@@ -159,35 +178,29 @@
 
       static get contentTemplate() {
         return `
-          <div class='wrap' style="height:[[height]];width:[[width]]">
-            <div class="drag-scroll-target drag-scroll-target-top" style="
-              height:[[dragScrollTargetHeight]]px;
-              display:[[targetDisplay]];
-            "></div>
-              <slot name='scroll-target'></slot>
-            <div class="drag-scroll-target drag-scroll-target-bottom" style="
-              height:[[dragScrollTargetHeight]]px;
-              display:[[targetDisplay]];
-            "></div>
-          </div>
+          <div class="drag-scroll-target drag-scroll-target-top" style="
+            height:[[dragScrollTargetHeight]]px;
+            width: [[width]]px;
+            top: [[topTargetOffsetTop]]px;
+            display:[[targetDisplay]];
+          "></div>
+            <slot name='scroll-target'></slot>
+          <div class="drag-scroll-target drag-scroll-target-bottom" style="
+            height:[[dragScrollTargetHeight]]px;
+            width: [[width]]px;
+            top: [[bottomTargetOffsetTop]]px;
+            display:[[targetDisplay]];
+          "></div>
         `;
       }
 
       static get styleTemplate() {
         return `
-          .wrap {
-            position: relative;
-          }
           .drag-scroll-target {
             position: absolute;
             width: 100%;
             z-index: 9999;
-          }
-          .drag-scroll-target-top {
-            top: 0;
-          }
-          .drag-scroll-target-bottom {
-            bottom: 0;
+            background-color: rgba(225, 0,0,0.5)
           }
         `;
       }
