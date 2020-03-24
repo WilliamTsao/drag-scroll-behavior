@@ -45,6 +45,10 @@
           targetWidth: {
             type: Number,
             computed: '_getTargetWidth(targetDisplay, scrollElement.offsetWidth)'
+          },
+          scrollTargetColor: {
+            type: String,
+            value: 'transparent'
           }
         };
       }
@@ -185,6 +189,7 @@
             width: [[targetWidth]]px;
             top: [[topTargetOffsetTop]]px;
             display:[[targetDisplay]];
+            background-color:[[scrollTargetColor]];
           "></div>
             <slot name='scroll-target'></slot>
           <div class="drag-scroll-target drag-scroll-target-bottom" style="
@@ -192,6 +197,7 @@
             width: [[targetWidth]]px;
             top: [[bottomTargetOffsetTop]]px;
             display:[[targetDisplay]];
+            background-color:[[scrollTargetColor]];
           "></div>
         `;
       }
@@ -202,7 +208,6 @@
             position: absolute;
             width: 100%;
             z-index: 9999;
-            background-color: rgba(225, 0,0,0.5)
           }
         `;
       }
