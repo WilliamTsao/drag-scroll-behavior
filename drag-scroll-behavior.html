@@ -14,8 +14,7 @@
       static get properties() {
         return {
           scrollElement: {
-            type: HTMLElement,
-            observer: 'scrollElementChanged'
+            type: HTMLElement
           },
           dragScrollTargetHeight: {
             type: Number,
@@ -37,11 +36,15 @@
           },
           topTargetOffsetTop: {
             type: Number,
-            computed: '_getTargetPosition("top", scrollEleTop)'
+            computed: '_getTargetPosition(targetDisplay, "top", scrollElement.offsetTop)'
           },
           bottomTargetOffsetTop: {
             type: Number,
-            computed: '_getTargetPosition("bottom", scrollEleTop, height, dragScrollTargetHeight)'
+            computed: '_getTargetPosition(targetDisplay, "bottom", scrollElement.offsetTop, scrollElement.offsetHeight, dragScrollTargetHeight)'
+          },
+          targetWidth: {
+            type: Number,
+            computed: '_getTargetWidth(targetDisplay, scrollElement.offsetWidth)'
           }
         };
       }
@@ -118,14 +121,6 @@
         this._observer.disconnect();
       }
 
-      scrollElementChanged() {
-        if(this.scrollElement) {
-          this.height = this.scrollElement.offsetHeight;
-          this.width = this.scrollElement.offsetWidth;
-          this.scrollEleTop = this.scrollElement.offsetTop;
-        }
-      }
-
       debouncedScrollEnd(direction) {
         this.scrollDebouncer = Polymer.Debouncer.debounce(
           this.scrollDebouncer,
@@ -157,13 +152,20 @@
         return ele.scrollTop === ele.scrollHeight - ele.offsetHeight
       }
 
-      _getTargetPosition(target, offsetTop, elementHeight, targetHeight) {
+      _getTargetPosition(displayTarget, target, offsetTop, elementHeight, targetHeight) {
+        if(displayTarget === 'none') return;
         offsetTop = offsetTop || 0;
         switch(target) {
           case 'top':
             return offsetTop;
           case 'bottom':
             return offsetTop + elementHeight - targetHeight;
+        }
+      }
+
+      _getTargetWidth(displayTarget, width) {
+        if(displayTarget) {
+          return width;
         }
       }
 
@@ -180,14 +182,14 @@
         return `
           <div class="drag-scroll-target drag-scroll-target-top" style="
             height:[[dragScrollTargetHeight]]px;
-            width: [[width]]px;
+            width: [[targetWidth]]px;
             top: [[topTargetOffsetTop]]px;
             display:[[targetDisplay]];
           "></div>
             <slot name='scroll-target'></slot>
           <div class="drag-scroll-target drag-scroll-target-bottom" style="
             height:[[dragScrollTargetHeight]]px;
-            width: [[width]]px;
+            width: [[targetWidth]]px;
             top: [[bottomTargetOffsetTop]]px;
             display:[[targetDisplay]];
           "></div>
