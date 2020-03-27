@@ -20,7 +20,11 @@
             type: Number,
             value: 20
           },
-          targetDisplay: {
+          targetDisplayTop: {
+            type: String,
+            value: 'none'
+          },
+          targetDisplayBottom: {
             type: String,
             value: 'none'
           },
@@ -30,23 +34,27 @@
             value: 5
           },
           /* miliseconds per frame, smaller => faster scroll */
-          msPerFrame : {
+          msPerFrame: {
             type: Number,
             value: 25
           },
           topTargetOffsetTop: {
             type: Number,
-            computed: '_getTargetPosition(targetDisplay, "top", scrollElement.offsetTop)'
+            computed: '_getTargetPosition(targetDisplayTop, "top", scrollElement.offsetTop)'
           },
           bottomTargetOffsetTop: {
             type: Number,
-            computed: '_getTargetPosition(targetDisplay, "bottom", scrollElement.offsetTop, scrollElement.offsetHeight, dragScrollTargetHeight)'
+            computed: '_getTargetPosition(targetDisplayBottom, "bottom", scrollElement.offsetTop, scrollElement.offsetHeight, dragScrollTargetHeight)'
           },
           targetWidth: {
             type: Number,
-            computed: '_getTargetWidth(targetDisplay, scrollElement.offsetWidth)'
+            computed: '_getTargetWidth(targetDisplayTop, targetDisplayBottom, scrollElement.offsetWidth)'
           },
-          scrollTargetColor: {
+          scrollTargetGradientStart: {
+            type: String,
+            value: 'transparent'
+          },
+          scrollTargetGradientEnd: {
             type: String,
             value: 'transparent'
           }
@@ -90,53 +98,53 @@
 
       handleDragOver(e) {
         e.preventDefault();
-        /* if top or bottom target is the actual target of dragged over, do nothing */
-        if(e.composedPath()[0] === this.topTarget || e.composedPath()[0] === this.bottomTarget) {
-          return;
-        }
-        /* if dragging over the top of scroll element and scroll element is already scrolled to the top OR
-        if dragging over the bottom of scroll element and scroll element is already scrolled to the bottom
-        do NOT show target */
         let layerY = e.layerY;
-        if((layerY <= this.dragScrollTargetHeight && this.atTop(this.scrollElement)) || 
-          (layerY >= this.scrollElement.offsetHeight - this.dragScrollTargetHeight && this.atBottom(this.scrollElement))) {
-          this.targetDisplay = 'none';  
-        } else {
-          this.targetDisplay = 'block';
+        this.targetDisplayTop = 'block';
+        this.targetDisplayBottom = 'block';
+        // if already at top hide top target; if already at bottom, hide bottom target
+        if(this.atTop(this.scrollElement)) {
+          this.targetDisplayTop = 'none';
+        }
+        if(this.atBottom(this.scrollElement)) {
+          this.targetDisplayBottom = 'none';
         }
       }
 
       handleDrop(e) {
         e.preventDefault();
-        this.targetDisplay = 'none';
+        this.targetDisplayTop = 'none';
+        this.targetDisplayBottom = 'none';
       }
 
       handleDragOverTopTarget(e) {
+        e.preventDefault();
+        e.stopPropagation();
         if(this.scrollElement) {
           if(!this.atTop(this.scrollElement)) {
             this.scroll(-1);
             this.debouncedScrollEnd();
           } else {
-            this.targetDisplay = 'none';
+            this.targetDisplayTop = 'none';
           }
         }
       }
 
       handleDragOverBottomTarget(e) {
+        e.preventDefault();
+        e.stopPropagation();
         if(this.scrollElement) {
           if(!this.atBottom(this.scrollElement)) {
             this.scroll(1);
             this.debouncedScrollEnd();
           } else {
-            this.targetDisplay = 'none';
+            this.targetDisplayBottom = 'none';
           }
         }
       }
 
       hideTargets(e) {
-        if(this.targetDisplay === 'block') {
-          this.targetDisplay = 'none';
-        }
+        this.targetDisplayTop = 'none';
+        this.targetDisplayBottom = 'none';
       }
 
       debouncedScrollEnd(direction) {
@@ -167,7 +175,7 @@
       }
 
       atBottom(ele) {
-        return ele.scrollTop === ele.scrollHeight - ele.offsetHeight
+        return ele.scrollTop >= ele.scrollHeight - ele.offsetHeight
       }
 
       _getTargetPosition(displayTarget, target, offsetTop, elementHeight, targetHeight) {
@@ -181,8 +189,8 @@
         }
       }
 
-      _getTargetWidth(displayTarget, width) {
-        if(displayTarget) {
+      _getTargetWidth(displayTargetTop, displayTargetBottom, width) {
+        if(displayTargetTop === 'block' || displayTargetBottom === 'block') {
           return width;
         }
       }
@@ -202,16 +210,16 @@
             height:[[dragScrollTargetHeight]]px;
             width: [[targetWidth]]px;
             top: [[topTargetOffsetTop]]px;
-            display:[[targetDisplay]];
-            background-color:[[scrollTargetColor]];
+            display:[[targetDisplayTop]];
+            background-image: linear-gradient(to top, [[scrollTargetGradientStart]], [[scrollTargetGradientEnd]]);
           "></div>
             <slot name='scroll-target'></slot>
           <div class="drag-scroll-target drag-scroll-target-bottom" style="
             height:[[dragScrollTargetHeight]]px;
             width: [[targetWidth]]px;
             top: [[bottomTargetOffsetTop]]px;
-            display:[[targetDisplay]];
-            background-color:[[scrollTargetColor]];
+            display:[[targetDisplayBottom]];
+            background-image: linear-gradient(to bottom, [[scrollTargetGradientStart]], [[scrollTargetGradientEnd]]);
           "></div>
         `;
       }
