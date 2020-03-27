@@ -49,14 +49,6 @@
           targetWidth: {
             type: Number,
             computed: '_getTargetWidth(targetDisplayTop, targetDisplayBottom, scrollElement.offsetWidth)'
-          },
-          scrollTargetGradientStart: {
-            type: String,
-            value: 'transparent'
-          },
-          scrollTargetGradientEnd: {
-            type: String,
-            value: 'transparent'
           }
         };
       }
@@ -71,8 +63,6 @@
           this.scrollElement = this.querySelector('[slot="scroll-target"]');
         });
         this.addEventListener('dragover', this.handleDragOver);
-        this.addEventListener('drop', this.handleDrop);
-        this.addEventListener('mousemove', this.hideTargets);
         this.topTarget = this.shadowRoot.querySelector('.drag-scroll-target-top');
         this.bottomTarget = this.shadowRoot.querySelector('.drag-scroll-target-bottom');
         this.boundDragOverTopTarget = this.handleDragOverTopTarget.bind(this);
@@ -88,8 +78,6 @@
         super.disconnectedCallback();
         this._observer.disconnect();
         this.removeEventListener('dragover', this.handleDragOver);
-        this.removeEventListener('drop', this.handleDrop);
-        this.removeEventListener('mousemove', this.hideTargets);
         this.topTarget.removeEventListener('dragover', this.boundDragOverTopTarget);
         this.bottomTarget.removeEventListener('dragover', this.boundDragOverBottomTarget);
         this.topTarget.removeEventListener('mouseover', this.boundHideTargets);
@@ -98,7 +86,7 @@
 
       handleDragOver(e) {
         e.preventDefault();
-        let layerY = e.layerY;
+        this.debouncedDragOverEnd();
         this.targetDisplayTop = 'block';
         this.targetDisplayBottom = 'block';
         // if already at top hide top target; if already at bottom, hide bottom target
@@ -110,15 +98,8 @@
         }
       }
 
-      handleDrop(e) {
-        e.preventDefault();
-        this.targetDisplayTop = 'none';
-        this.targetDisplayBottom = 'none';
-      }
-
       handleDragOverTopTarget(e) {
         e.preventDefault();
-        e.stopPropagation();
         if(this.scrollElement) {
           if(!this.atTop(this.scrollElement)) {
             this.scroll(-1);
@@ -131,7 +112,6 @@
 
       handleDragOverBottomTarget(e) {
         e.preventDefault();
-        e.stopPropagation();
         if(this.scrollElement) {
           if(!this.atBottom(this.scrollElement)) {
             this.scroll(1);
@@ -147,11 +127,19 @@
         this.targetDisplayBottom = 'none';
       }
 
-      debouncedScrollEnd(direction) {
+      debouncedScrollEnd() {
         this.scrollDebouncer = Polymer.Debouncer.debounce(
           this.scrollDebouncer,
           Polymer.Async.timeOut.after('100'),
           this.scrollStop.bind(this)
+        );
+      }
+
+      debouncedDragOverEnd() {
+        this.dragOverDebouncer = Polymer.Debouncer.debounce(
+          this.dragOverDebouncer,
+          Polymer.Async.timeOut.after('100'),
+          this.hideTargets.bind(this)
         );
       }
 
@@ -211,7 +199,6 @@
             width: [[targetWidth]]px;
             top: [[topTargetOffsetTop]]px;
             display:[[targetDisplayTop]];
-            background-image: linear-gradient(to top, [[scrollTargetGradientStart]], [[scrollTargetGradientEnd]]);
           "></div>
             <slot name='scroll-target'></slot>
           <div class="drag-scroll-target drag-scroll-target-bottom" style="
@@ -219,17 +206,26 @@
             width: [[targetWidth]]px;
             top: [[bottomTargetOffsetTop]]px;
             display:[[targetDisplayBottom]];
-            background-image: linear-gradient(to bottom, [[scrollTargetGradientStart]], [[scrollTargetGradientEnd]]);
           "></div>
         `;
       }
 
       static get styleTemplate() {
         return `
+          :host {
+            --top-target-bg-image: none;
+            --top-target-bg-image: none;
+          }
           .drag-scroll-target {
             position: absolute;
             width: 100%;
             z-index: 9999;
+          }
+          .drag-scroll-target-top {
+            background-image: var(--top-target-bg-image);
+          }
+          .drag-scroll-target-bottom {
+            background-image: var(--bottom-target-bg-image);
           }
         `;
       }
