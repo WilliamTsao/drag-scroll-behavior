@@ -31,7 +31,8 @@ drag-scroll-behavior is not built to....
 
 Custom property                  | Description                            | Default
 ---------------------------------|----------------------------------------|--------------------
-`--drag-scroll-behavior-width`     | Width of the element                   | 256px
+`--top-target-bg-image`     | Background image for top target             | none
+`--bottom-target-bg-image`  | Background image for bottom target          | none
 
 
 ### Future Goals

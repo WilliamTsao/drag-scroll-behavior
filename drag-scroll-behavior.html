@@ -49,14 +49,6 @@
           targetWidth: {
             type: Number,
             computed: '_getTargetWidth(targetDisplayTop, targetDisplayBottom, scrollElement.offsetWidth)'
-          },
-          scrollTargetGradientStart: {
-            type: String,
-            value: 'transparent'
-          },
-          scrollTargetGradientEnd: {
-            type: String,
-            value: 'transparent'
           }
         };
       }
@@ -207,7 +199,6 @@
             width: [[targetWidth]]px;
             top: [[topTargetOffsetTop]]px;
             display:[[targetDisplayTop]];
-            background-image: linear-gradient(to top, [[scrollTargetGradientStart]], [[scrollTargetGradientEnd]]);
           "></div>
             <slot name='scroll-target'></slot>
           <div class="drag-scroll-target drag-scroll-target-bottom" style="
@@ -215,17 +206,26 @@
             width: [[targetWidth]]px;
             top: [[bottomTargetOffsetTop]]px;
             display:[[targetDisplayBottom]];
-            background-image: linear-gradient(to bottom, [[scrollTargetGradientStart]], [[scrollTargetGradientEnd]]);
           "></div>
         `;
       }
 
       static get styleTemplate() {
         return `
+          :host {
+            --top-target-bg-image: none;
+            --top-target-bg-image: none;
+          }
           .drag-scroll-target {
             position: absolute;
             width: 100%;
             z-index: 9999;
+          }
+          .drag-scroll-target-top {
+            background-image: var(--top-target-bg-image);
+          }
+          .drag-scroll-target-bottom {
+            background-image: var(--bottom-target-bg-image);
           }
         `;
       }

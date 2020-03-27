@@ -55,18 +55,24 @@
 			</drag-scroll-behavior>
 		</template>
 	</demo-snippet>
-
+	<custom-style>
+		<style is="custom-style" include="demo-pages-shared-styles">
+			#demo-2 {
+				--top-target-bg-image: linear-gradient(to top, transparent, #aaa);
+				--bottom-target-bg-image: linear-gradient(to bottom, transparent, #aaa);
+			}
+		</style>
+	</custom-style>
 	<demo-snippet class="centered-demo">
 		<template>
 			<div class='drag' draggable=true>
 				drag me
 			</div>
 			<drag-scroll-behavior
+				id='demo-2'
 				ms-per-frame=10
 				frame-size=10
 				drag-scroll-target-height=25
-				scroll-target-gradient-start='transparent'
-				scroll-target-gradient-end='#aaa'
 			>
 				<div slot='scroll-target' class='drop'>
 					<div class="drop-target">DROP HERE</div>
