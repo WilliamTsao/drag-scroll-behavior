@@ -86,7 +86,6 @@
 
       handleDragOver(e) {
         e.preventDefault();
-        this.debouncedDragOverEnd();
         this.targetDisplayTop = 'block';
         this.targetDisplayBottom = 'block';
         // if already at top hide top target; if already at bottom, hide bottom target
@@ -103,7 +102,6 @@
         if(this.scrollElement) {
           if(!this.atTop(this.scrollElement)) {
             this.scroll(-1);
-            this.debouncedScrollEnd();
           } else {
             this.targetDisplayTop = 'none';
           }
@@ -115,7 +113,6 @@
         if(this.scrollElement) {
           if(!this.atBottom(this.scrollElement)) {
             this.scroll(1);
-            this.debouncedScrollEnd();
           } else {
             this.targetDisplayBottom = 'none';
           }
@@ -135,14 +132,6 @@
         );
       }
 
-      debouncedDragOverEnd() {
-        this.dragOverDebouncer = Polymer.Debouncer.debounce(
-          this.dragOverDebouncer,
-          Polymer.Async.timeOut.after('100'),
-          this.hideTargets.bind(this)
-        );
-      }
-
       scroll(direction) {
         if(!this.scroller) {
           this.scroller = setInterval(()=>{
@@ -150,6 +139,8 @@
               top: this.scrollElement.scrollTop + this.frameSize * direction
             });
           }, this.msPerFrame);
+        } else {
+          this.debouncedScrollEnd();
         }
       }
 
@@ -220,6 +211,7 @@
             position: absolute;
             width: 100%;
             z-index: 9999;
+            background:rgba(255,0,0,0.5)
           }
           .drag-scroll-target-top {
             background-image: var(--top-target-bg-image);
