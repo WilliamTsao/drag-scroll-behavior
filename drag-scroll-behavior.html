@@ -63,13 +63,18 @@
           this.scrollElement = this.querySelector('[slot="scroll-target"]');
         });
         this.addEventListener('dragover', this.handleDragOver);
+        this.addEventListener('drop', this.hideTargets);
+        this.addEventListener('mousemove', this.hideTargets);
         this.topTarget = this.shadowRoot.querySelector('.drag-scroll-target-top');
         this.bottomTarget = this.shadowRoot.querySelector('.drag-scroll-target-bottom');
         this.boundDragOverTopTarget = this.handleDragOverTopTarget.bind(this);
         this.boundDragOverBottomTarget = this.handleDragOverBottomTarget.bind(this);
+        this.boundScrollStop = this.scrollStop.bind(this);
         this.boundHideTargets = this.hideTargets.bind(this)
         this.topTarget.addEventListener('dragover', this.boundDragOverTopTarget);
         this.bottomTarget.addEventListener('dragover', this.boundDragOverBottomTarget);
+        this.topTarget.addEventListener('dragleave', this.boundScrollStop);
+        this.bottomTarget.addEventListener('dragleave', this.boundScrollStop);
         this.topTarget.addEventListener('mouseover', this.boundHideTargets);
         this.bottomTarget.addEventListener('mouseover', this.boundHideTargets);
       }
@@ -78,8 +83,12 @@
         super.disconnectedCallback();
         this._observer.disconnect();
         this.removeEventListener('dragover', this.handleDragOver);
+        this.removeEventListener('drop', this.hideTargets);
+        this.removeEventListener('mousemove', this.hideTargets);
         this.topTarget.removeEventListener('dragover', this.boundDragOverTopTarget);
         this.bottomTarget.removeEventListener('dragover', this.boundDragOverBottomTarget);
+        this.topTarget.removeEventListener('dragleave', this.boundScrollStop);
+        this.bottomTarget.removeEventListener('dragleave', this.boundScrollStop);
         this.topTarget.removeEventListener('mouseover', this.boundHideTargets);
         this.bottomTarget.removeEventListener('mouseover', this.boundHideTargets);
       }
@@ -124,14 +133,6 @@
         this.targetDisplayBottom = 'none';
       }
 
-      debouncedScrollEnd() {
-        this.scrollDebouncer = Polymer.Debouncer.debounce(
-          this.scrollDebouncer,
-          Polymer.Async.timeOut.after('100'),
-          this.scrollStop.bind(this)
-        );
-      }
-
       scroll(direction) {
         if(!this.scroller) {
           this.scroller = setInterval(()=>{
@@ -139,8 +140,6 @@
               top: this.scrollElement.scrollTop + this.frameSize * direction
             });
           }, this.msPerFrame);
-        } else {
-          this.debouncedScrollEnd();
         }
       }
 
@@ -205,13 +204,12 @@
         return `
           :host {
             --top-target-bg-image: none;
-            --top-target-bg-image: none;
+            --bottom-target-bg-image: none;
           }
           .drag-scroll-target {
             position: absolute;
             width: 100%;
             z-index: 9999;
-            background:rgba(255,0,0,0.5)
           }
           .drag-scroll-target-top {
             background-image: var(--top-target-bg-image);
