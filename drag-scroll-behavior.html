@@ -62,7 +62,7 @@
         this._observer = new Polymer.FlattenedNodesObserver(this, (info) => {
           this.scrollElement = this.querySelector('[slot="scroll-target"]');
         });
-        this.addEventListener('dragover', this.handleDragOver);
+        this.addEventListener('dragenter', this.handleDragEnter);
         this.addEventListener('drop', this.hideTargets);
         this.addEventListener('mousemove', this.hideTargets);
         this.topTarget = this.shadowRoot.querySelector('.drag-scroll-target-top');
@@ -82,7 +82,7 @@
       disconnectedCallback() {
         super.disconnectedCallback();
         this._observer.disconnect();
-        this.removeEventListener('dragover', this.handleDragOver);
+        this.removeEventListener('dragenter', this.handleDragEnter);
         this.removeEventListener('drop', this.hideTargets);
         this.removeEventListener('mousemove', this.hideTargets);
         this.topTarget.removeEventListener('dragover', this.boundDragOverTopTarget);
@@ -93,7 +93,7 @@
         this.bottomTarget.removeEventListener('mouseover', this.boundHideTargets);
       }
 
-      handleDragOver(e) {
+      handleDragEnter(e) {
         e.preventDefault();
         this.targetDisplayTop = 'block';
         this.targetDisplayBottom = 'block';
