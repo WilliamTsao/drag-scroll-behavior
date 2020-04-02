@@ -112,6 +112,9 @@
           if(!this.atTop(this.scrollElement)) {
             this.scroll(-1);
           } else {
+            if(this.scroller) {
+              this.scrollStop()
+            }
             this.targetDisplayTop = 'none';
           }
         }
@@ -123,6 +126,9 @@
           if(!this.atBottom(this.scrollElement)) {
             this.scroll(1);
           } else {
+            if(this.scroller) {
+              this.scrollStop()
+            }
             this.targetDisplayBottom = 'none';
           }
         }
