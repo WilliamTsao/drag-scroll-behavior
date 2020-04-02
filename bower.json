@@ -1,7 +1,7 @@
 {
   "name": "drag-scroll-behavior",
   "author":"william tsao",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Allowing scrolling to happen when you are dra",
   "private": true,
   "license": "https://github.com/williamtsao/drag-scroll-behavior/LICENSE",
